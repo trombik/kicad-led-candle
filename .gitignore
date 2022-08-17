@@ -1,0 +1,4 @@
+.pio/
+.tox/
+*-backups/
+.FCStd1
