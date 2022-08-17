@@ -25,3 +25,10 @@ the duty. Requires more flash memory.
 
 `-D USING_PINK_NOISE_FLOAT` uses floating point math version of `pink_noise()`.
 Requires more flash memory.
+
+# LICENSE
+
+MIT. See [LICENSE](LICENSE).
+
+[tiny_random.c](src/tiny_random.c) and [tiny_random.h](tiny_random.h) are
+licensed under 3-clause BSD license.
