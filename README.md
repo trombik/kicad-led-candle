@@ -36,5 +36,5 @@ pio debug -e attiny13a --interface=gdb -- -x init
 
 MIT. See [LICENSE](LICENSE).
 
-[tiny_random.c](src/tiny_random.c) and [tiny_random.h](tiny_random.h) are
+[tiny_random.c](src/tiny_random.c) and [tiny_random.h](src/tiny_random.h) are
 licensed under 3-clause BSD license.
