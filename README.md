@@ -2,6 +2,7 @@
 
 A simple LED candle using ATTiny AVR MCUs.
 
+![3D model of LED candle](assets/screenshot.png)
 ![LED candle](assets/led-candle.jpg)
 ![bottom view of LED candle](assets/led-candle-bottom.jpg)
 ![LED candle in the dark](assets/led-candle-in-dark.jpg)
