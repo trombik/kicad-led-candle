@@ -14,9 +14,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <Arduino.h>
 #include <avr/io.h>
 #include <util/delay.h>
-#include <Arduino.h>
 
 #if defined(USING_PINK_NOISE_FLOAT)
 
@@ -30,10 +30,10 @@
 #include "tiny_random.h"
 
 /* the initial seed for tiny_random() */
-#define PRNG_SEED   0xDEAD
+#define PRNG_SEED 0xDEAD
 
 /* time to delay */
-#define DELAY_MS    (70)
+#define DELAY_MS (70)
 
 /* generates pink noise, aka 1/f noise. returns 0..1000. uses floating point
  * math. too big for attiny13a.
@@ -44,25 +44,25 @@
 static int
 pink_noise(void)
 {
-    static int value = 0.1;
-    if (value < 0.5) {
-        value += value * value * 2;
-    } else {
-        value -= (1.0 - value) * (1.0 - value) * 2;
-    }
+	static int value = 0.1;
+	if (value < 0.5) {
+		value += value * value * 2;
+	} else {
+		value -= (1.0 - value) * (1.0 - value) * 2;
+	}
 
-    /* as the value tends to stay both ends of the range, use random */
-    if (value < 0.1 || value > 0.9) {
-        value = rand() / RAND_MAX;
-    }
-    /* multiply by 1000 for compatibility in main() */
-    return value * 1000;
+	/* as the value tends to stay both ends of the range, use random */
+	if (value < 0.1 || value > 0.9) {
+		value = rand() / RAND_MAX;
+	}
+	/* multiply by 1000 for compatibility in main() */
+	return value * 1000;
 }
 #elif defined(USING_WHITE_NOISE)
 static int
 white_noise(void)
 {
-    return tiny_random() / (0xffff / 1000) + 1;
+	return tiny_random() / (0xffff / 1000) + 1;
 }
 #else
 
@@ -70,17 +70,17 @@ white_noise(void)
 static int
 pink_noise(void)
 {
-    static int value = 100;
-    if (value < 500) {
-        value += (value * value / 1000) * 2;
-    } else {
-        value -= ((1000 - value) * (1000 - value) / 1000) * 2;
-    }
+	static int value = 100;
+	if (value < 500) {
+		value += (value * value / 1000) * 2;
+	} else {
+		value -= ((1000 - value) * (1000 - value) / 1000) * 2;
+	}
 
-    if (value < 100 || value > 900) {
-        value = tiny_random() / ((0xffff / 1000) + 1);
-    }
-    return value;
+	if (value < 100 || value > 900) {
+		value = tiny_random() / ((0xffff / 1000) + 1);
+	}
+	return value;
 }
 #endif
 
@@ -91,24 +91,26 @@ main(void)
 {
 
 	/* configure PB0 and PB1 as output */
-	DDRB |= (1 << DDB0 | 1 << DDB1);
+	pinMode(0, OUTPUT);
+	pinMode(1, OUTPUT);
 
 	/* set initial state to off */
-    PORTB |= (1 << DDB0 | 1 << DDB1);
+	digitalWrite(0, LOW);
+	digitalWrite(1, LOW);
 
-    /* initialize PRNG */
-    tiny_random_init(PRNG_SEED);
+	/* initialize PRNG */
+	tiny_random_init(PRNG_SEED);
 
-    for (;;) {
+	for (;;) {
 #if defined(USING_WHITE_NOISE)
-        duty = white_noise();
+		duty = white_noise();
 #else
-        duty = pink_noise();
+		duty = pink_noise();
 #endif
-        analogWrite(0, duty);
+		analogWrite(0, duty);
 
-        /* another (optional) LED for reversed phase */
-        analogWrite(1, 0xff - duty);
-        _delay_ms(DELAY_MS);
-    }
+		/* another (optional) LED for reversed phase */
+		analogWrite(1, 0xff - duty);
+		_delay_ms(DELAY_MS);
+	}
 }
