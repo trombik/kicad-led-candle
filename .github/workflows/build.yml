@@ -1,0 +1,56 @@
+---
+
+name: Build the project
+on:
+  - push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - 3.9
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache tox environment
+      uses: actions/cache@v2
+      with:
+        path: .tox
+        key: ${{ runner.os }}-tox-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/tox.ini') }}
+        restore-keys: |
+          ${{ runner.os }}-tox-
+
+    - name: Cache PlatformIO
+      uses: actions/cache@v2
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-${{ hashFiles('**/platformio.ini') }}
+        restore-keys: |
+          ${{ runner.os }}-pio-
+
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install tox
+      run: |
+        python -m pip install --upgrade pip
+        pip install tox
+
+    - name: Run tox
+      run: |
+        tox
+
+    - name: Build
+      run: |
+        source .tox/python/bin/activate
+        pio run
